@@ -2,17 +2,23 @@
 import { t, INTENT_META } from './js/strings.js';
 import * as storage from './js/storage.js';
 import { analyze, islandMessage, intentLabel, intentEmoji, detailedResponse, demoJSON } from './js/emotion-analyzer.js';
-import { startSession, continueSession, chatIslandMessage } from './js/conversation-engine.js';
+import { startSession, continueSession, chatIslandMessage, isOnline } from './js/conversation-engine.js';
 import { loadScenarios } from './js/scenario-library.js';
+import { DEFAULT_API_KEY } from './js/deepseek-client.js';
 
 const state = {
   screen: 'lang',
   lang: storage.loadLang(),
+  provider: storage.loadProvider(),
+  deepSeekKey: storage.loadDeepSeekKey(),
   diaryText: '',
   analysis: null,
   session: null,
   history: storage.loadRecords(),
   moodPages: storage.loadMoodDiary(),
+  isThinking: false,
+  chatError: null,
+  showKeyPanel: false,
 };
 
 const root = document.getElementById('app');
@@ -40,15 +46,40 @@ async function onAnalyze() {
   render();
 }
 
+function effectiveKey() {
+  return storage.effectiveDeepSeekKey(DEFAULT_API_KEY);
+}
+
 async function onStartChat() {
   if (!state.analysis) state.analysis = await analyze(state.diaryText);
-  state.session = await startSession(state.analysis, state.lang);
-  nav('chat');
+  state.isThinking = state.provider === 'deepseek';
+  state.chatError = null;
+  render();
+  try {
+    state.session = await startSession(state.analysis, state.lang, state.provider, effectiveKey());
+    if (state.session.lastError) state.chatError = state.session.lastError;
+    if (state.provider === 'deepseek' && !isOnline()) {
+      state.chatError = t(state.lang, 'networkOffline');
+      state.provider = 'local';
+      storage.saveProvider('local');
+    }
+  } finally {
+    state.isThinking = false;
+    nav('chat');
+  }
 }
 
 async function onSendChat(text) {
-  state.session = await continueSession(state.session, text, state.lang);
+  state.isThinking = state.provider === 'deepseek';
+  state.chatError = null;
   render();
+  try {
+    state.session = await continueSession(state.session, text, state.lang, state.provider, effectiveKey());
+    if (state.session.lastError) state.chatError = t(state.lang, 'deepSeekError') + ': ' + state.session.lastError;
+  } finally {
+    state.isThinking = false;
+    render();
+  }
 }
 
 function onSaveRecord() {
@@ -225,6 +256,8 @@ function renderChat() {
   const s = state.lang;
   const sess = state.session;
   const island = chatIslandMessage(sess, state.analysis, s);
+  const usingDeepSeek = state.provider === 'deepseek';
+  const privacy = usingDeepSeek ? t(s, 'deepSeekPrivacy') : t(s, 'chatPrivacy');
   root.innerHTML = `
     <section class="screen chat-screen">
       <header class="top-bar">
@@ -232,29 +265,68 @@ function renderChat() {
         <span>${esc(t(s, 'chatTitle'))}</span>
         <button class="link-btn" id="finishBtn">${esc(t(s, 'saveReview'))}</button>
       </header>
+      <div class="provider-bar">
+        <span class="provider-label">${esc(t(s, 'providerLabel'))}</span>
+        <button class="chip ${state.provider === 'local' ? 'active' : ''}" data-provider="local">🌿 ${esc(t(s, 'localAI'))}</button>
+        <button class="chip ${state.provider === 'deepseek' ? 'active' : ''}" data-provider="deepseek">✨ ${esc(t(s, 'deepSeek'))}</button>
+        ${usingDeepSeek ? `<button class="link-btn" id="keyBtn">Key</button>` : ''}
+      </div>
+      ${state.showKeyPanel ? `
+        <div class="key-panel">
+          <label>${esc(t(s, 'deepSeekKeyTitle'))}</label>
+          <input id="keyInput" type="password" placeholder="sk-..." value="${esc(state.deepSeekKey)}" />
+          <p class="muted">${esc(t(s, 'deepSeekKeyHint'))}</p>
+          <button class="btn-primary" id="saveKeyBtn">${esc(t(s, 'deepSeekKeySave'))}</button>
+        </div>` : ''}
+      ${state.chatError ? `<div class="error-banner">${esc(state.chatError)}</div>` : ''}
       ${pillHTML(island, sess.dominantIntent)}
       <p class="turn-label">${esc(t(s, 'turn', sess.turnCount))}</p>
       <div class="chat-area" id="chatArea">${sess.messages.map(m => `
-        <div class="bubble ${m.role}">${esc(m.text)}${m.emojis?.length ? `<div class="emoji-strip">${m.emojis.join(' ')}</div>` : ''}</div>`).join('')}</div>
+        <div class="bubble ${m.role}">${esc(m.text)}${m.emojis?.length ? `<div class="emoji-strip">${m.emojis.join(' ')}</div>` : ''}</div>`).join('')}
+        ${state.isThinking ? `<div class="bubble assistant typing">${esc(t(s, 'deepSeekThinking'))}</div>` : ''}</div>
       <div class="chat-input-row">
-        <input id="chatInput" placeholder="${esc(t(s, 'chatPlaceholder'))}" />
-        <button class="btn-primary" id="sendBtn">${esc(t(s, 'send'))}</button>
+        <input id="chatInput" placeholder="${esc(t(s, 'chatPlaceholder'))}" ${state.isThinking ? 'disabled' : ''} />
+        <button class="btn-primary" id="sendBtn" ${state.isThinking ? 'disabled' : ''}>${esc(t(s, 'send'))}</button>
       </div>
-      <p class="privacy-foot">${esc(t(s, 'chatPrivacy'))}</p>
-      <p class="engine-badge">🌿 ${esc(t(s, 'localAI'))} · ${esc(t(s, 'localAIDesc'))}</p>
+      <p class="privacy-foot">${esc(privacy)}</p>
+      <p class="engine-badge">${usingDeepSeek ? '✨ DeepSeek · deepseek-chat' : `🌿 ${esc(t(s, 'localAI'))} · ${esc(t(s, 'localAIDesc'))}`}</p>
     </section>`;
   const area = root.querySelector('#chatArea');
   area.scrollTop = area.scrollHeight;
   const input = root.querySelector('#chatInput');
   const send = async () => {
     const v = input.value.trim();
-    if (!v) return;
+    if (!v || state.isThinking) return;
     input.value = '';
     await onSendChat(v);
   };
-  root.querySelector('#sendBtn').onclick = send;
-  input.onkeydown = e => { if (e.key === 'Enter') send(); };
-  root.querySelector('#finishBtn').onclick = () => nav('summary');
+  root.querySelector('#sendBtn')?.addEventListener('click', send);
+  input?.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+  root.querySelector('#finishBtn')?.addEventListener('click', () => nav('summary'));
+  root.querySelectorAll('[data-provider]').forEach(btn => {
+    btn.onclick = () => {
+      const p = btn.dataset.provider;
+      if (p === 'deepseek' && !isOnline()) {
+        state.chatError = t(s, 'networkOffline');
+        state.provider = 'local';
+      } else {
+        state.provider = p;
+        state.chatError = null;
+      }
+      storage.saveProvider(state.provider);
+      renderChat();
+    };
+  });
+  root.querySelector('#keyBtn')?.addEventListener('click', () => {
+    state.showKeyPanel = !state.showKeyPanel;
+    renderChat();
+  });
+  root.querySelector('#saveKeyBtn')?.addEventListener('click', () => {
+    state.deepSeekKey = root.querySelector('#keyInput').value.trim();
+    storage.saveDeepSeekKey(state.deepSeekKey);
+    state.showKeyPanel = false;
+    renderChat();
+  });
   bindNav(root);
 }
 

@@ -88,6 +88,51 @@ body {
   margin: 4px;
 }
 
+.chip.active {
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-weight: 600;
+  outline: 2px solid var(--blue);
+}
+
+.provider-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.provider-label { font-size: 0.78rem; color: var(--muted); }
+
+.key-panel {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.key-panel input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid #e5e5ea;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.error-banner {
+  background: #fff3f3;
+  color: #c62828;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+
+.bubble.typing { opacity: 0.7; font-style: italic; }
+
+
 .lang-screen {
   display: flex;
   align-items: center;

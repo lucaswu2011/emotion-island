@@ -1,5 +1,6 @@
 import { analyze, islandMessage, intentLabel } from './emotion-analyzer.js';
-import { matchScenario, detectTone } from './scenario-library.js';
+import { matchScenario, matchLocalGuard, detectTone } from './scenario-library.js';
+import { deepSeekComplete, replyEmojis, DEFAULT_API_KEY } from './deepseek-client.js';
 import { t } from './strings.js';
 
 const CRISIS_KW = ['想死', '自杀', '自残', '不想活', 'suicide', 'kill myself', 'self-harm'];
@@ -41,8 +42,17 @@ function pickFallback(tone, lang, seed) {
   return pool[seed % pool.length];
 }
 
-export async function startSession(result, lang) {
-  const reply = await openingReply(result, lang);
+function isOnline() {
+  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+}
+
+function resolveProvider(provider) {
+  if (provider === 'deepseek' && !isOnline()) return 'local';
+  return provider;
+}
+
+export async function startSession(result, lang, provider = 'local', apiKey = DEFAULT_API_KEY) {
+  const reply = await openingReply(result, lang, provider, apiKey);
   return {
     messages: [
       { role: 'user', text: result.userText },
@@ -53,14 +63,52 @@ export async function startSession(result, lang) {
     dominantIntent: result.intent,
     userLanguage: lang,
     accumulated: result.userText,
+    providerUsed: reply.providerUsed || provider,
+    lastError: reply.error || null,
   };
 }
 
-async function openingReply(result, lang) {
+async function openingReply(result, lang, provider, apiKey) {
   const text = result.userText;
-  if (CRISIS_KW.some(k => contains(text, k))) return crisisReply(lang);
-
   const usedKeys = new Set();
+  const tone = detectTone(text);
+
+  if (CRISIS_KW.some(k => contains(text, k))) {
+    return { ...crisisReply(lang), providerUsed: 'local' };
+  }
+
+  const guard = await matchLocalGuard({
+    accumulated: text, current: text, tone, lang, usedKeys, seed: seedFrom(text, 0),
+  });
+  if (guard) return { ...guard, providerUsed: 'local' };
+
+  const p = resolveProvider(provider);
+  if (p === 'deepseek') {
+    try {
+      const aiText = await deepSeekComplete({
+        apiKey,
+        messages: [{ role: 'user', text }],
+        lang,
+        intent: result.intent,
+      });
+      return {
+        text: aiText,
+        emojis: replyEmojis(result.intent, tone === 'positive' ? 'positive' : tone === 'negative' ? 'negative' : 'neutral'),
+        replyKey: 'deepseek_open',
+        providerUsed: 'deepseek',
+      };
+    } catch (e) {
+      // 失败则回退本地
+      const local = await localOpeningFallback(result, lang, usedKeys);
+      return { ...local, providerUsed: 'local', error: e.message };
+    }
+  }
+
+  return { ...(await localOpeningFallback(result, lang, usedKeys)), providerUsed: 'local' };
+}
+
+async function localOpeningFallback(result, lang, usedKeys) {
+  const text = result.userText;
   const tone = detectTone(text);
   const scenario = await matchScenario({
     accumulated: text, current: text, tone, lang, usedKeys, seed: seedFrom(text, 0),
@@ -82,7 +130,7 @@ async function openingReply(result, lang) {
   };
 }
 
-export async function continueSession(session, userInput, lang) {
+export async function continueSession(session, userInput, lang, provider = 'local', apiKey = DEFAULT_API_KEY) {
   const trimmed = userInput.trim();
   if (!trimmed) return session;
 
@@ -90,23 +138,28 @@ export async function continueSession(session, userInput, lang) {
   const turnCount = session.turnCount + 1;
   const accumulated = `${session.accumulated} ${trimmed}`;
   const usedKeys = new Set(session.usedReplyKeys);
-
+  const tone = detectTone(trimmed);
   let reply;
+  let providerUsed = resolveProvider(provider);
+  let lastError = null;
+
   if (CRISIS_KW.some(k => contains(trimmed, k))) {
     reply = crisisReply(lang);
+    providerUsed = 'local';
   } else if (THANKS_KW.some(k => contains(trimmed, k))) {
     reply = {
       text: lang === 'en' ? "You're welcome. I'm glad I could be here." : '不客气，能陪着你真好。',
       emojis: ['🫂', '😊'], replyKey: 'thanks',
     };
+    providerUsed = 'local';
   } else if (BYE_KW.some(k => contains(trimmed, k))) {
     reply = {
       text: lang === 'en' ? 'Okay. This island is always here when you need it.' : '好，这座小岛随时都在，需要的时候回来就好。',
       emojis: ['🌿', '💙'], replyKey: 'bye',
     };
+    providerUsed = 'local';
   } else {
-    const tone = detectTone(trimmed);
-    reply = await matchScenario({
+    const guard = await matchLocalGuard({
       accumulated: session.accumulated,
       current: trimmed,
       tone,
@@ -114,12 +167,55 @@ export async function continueSession(session, userInput, lang) {
       usedKeys,
       seed: seedFrom(trimmed, turnCount),
     });
-    if (!reply) {
-      reply = {
-        text: pickFallback(tone === 'positive' ? 'positive' : tone === 'negative' ? 'negative' : 'neutral', lang, seedFrom(trimmed, turnCount)),
-        emojis: ['🫂', '🌿'],
-        replyKey: `fb_${turnCount}`,
-      };
+    if (guard) {
+      reply = guard;
+      providerUsed = 'local';
+    } else if (providerUsed === 'deepseek') {
+      try {
+        const analysis = await analyze(accumulated);
+        const aiText = await deepSeekComplete({
+          apiKey,
+          messages,
+          lang,
+          intent: analysis.intent,
+        });
+        reply = {
+          text: aiText,
+          emojis: replyEmojis(analysis.intent, tone === 'positive' ? 'positive' : tone === 'negative' ? 'negative' : 'neutral'),
+          replyKey: `deepseek_${turnCount}`,
+        };
+      } catch (e) {
+        lastError = e.message;
+        providerUsed = 'local';
+        reply = await matchScenario({
+          accumulated: session.accumulated,
+          current: trimmed,
+          tone,
+          lang,
+          usedKeys,
+          seed: seedFrom(trimmed, turnCount),
+        }) || {
+          text: pickFallback(tone === 'positive' ? 'positive' : tone === 'negative' ? 'negative' : 'neutral', lang, seedFrom(trimmed, turnCount)),
+          emojis: ['🫂', '🌿'],
+          replyKey: `fb_${turnCount}`,
+        };
+      }
+    } else {
+      reply = await matchScenario({
+        accumulated: session.accumulated,
+        current: trimmed,
+        tone,
+        lang,
+        usedKeys,
+        seed: seedFrom(trimmed, turnCount),
+      });
+      if (!reply) {
+        reply = {
+          text: pickFallback(tone === 'positive' ? 'positive' : tone === 'negative' ? 'negative' : 'neutral', lang, seedFrom(trimmed, turnCount)),
+          emojis: ['🫂', '🌿'],
+          replyKey: `fb_${turnCount}`,
+        };
+      }
     }
   }
 
@@ -135,6 +231,8 @@ export async function continueSession(session, userInput, lang) {
     dominantIntent: analysis.intent,
     accumulated,
     userLanguage: lang,
+    providerUsed,
+    lastError,
   };
 }
 
@@ -151,3 +249,5 @@ export function chatIslandMessage(session, initialResult, lang) {
 export function intentName(intent, lang) {
   return intentLabel(intent, lang);
 }
+
+export { isOnline };

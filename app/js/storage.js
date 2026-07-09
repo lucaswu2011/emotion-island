@@ -3,10 +3,33 @@ const KEYS = {
   records: 'emotion_island_records',
   moodDiary: 'emotion_island_mood_diary',
   langGate: 'ei_lang_gate',
+  provider: 'companionAIProvider',
+  deepSeekKey: 'deepSeekAPIKey',
 };
 
 export function loadLang() {
   return localStorage.getItem(KEYS.lang) || 'zh';
+}
+
+export function loadProvider() {
+  return localStorage.getItem(KEYS.provider) || 'local';
+}
+
+export function saveProvider(provider) {
+  localStorage.setItem(KEYS.provider, provider);
+}
+
+export function loadDeepSeekKey() {
+  const stored = (localStorage.getItem(KEYS.deepSeekKey) || '').trim();
+  return stored;
+}
+
+export function saveDeepSeekKey(key) {
+  localStorage.setItem(KEYS.deepSeekKey, (key || '').trim());
+}
+
+export function effectiveDeepSeekKey(defaultKey) {
+  return loadDeepSeekKey() || defaultKey;
 }
 
 export function saveLang(lang) {

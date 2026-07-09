@@ -60,11 +60,17 @@ function pickLine(arr, seed) {
 }
 
 export async function matchScenario({ accumulated, current, tone, lang, usedKeys, seed }) {
+  const hit = await findBestTemplate(accumulated, current, tone);
+  if (!hit) return null;
+  return buildReply(hit.template, lang, usedKeys, seed, hit.template.comfortOnly || hit.template.gentleOnly);
+}
+
+async function findBestTemplate(accumulated, current, tone) {
   await loadScenarios();
   const matchTone = resolveTone(accumulated, current, tone);
 
   const bullying = matchBullying(accumulated, current);
-  if (bullying) return buildReply(bullying, lang, usedKeys, seed, true);
+  if (bullying) return { template: bullying, score: 999 };
 
   let pool = poolForTone(matchTone, templates);
   let hit = bestMatch(accumulated, current, pool, false);
@@ -73,8 +79,23 @@ export async function matchScenario({ accumulated, current, tone, lang, usedKeys
       || bestMatch(accumulated, current, templates.filter(t => t.tone === 'positive'), false);
   }
   if (!hit) hit = bestMatch(accumulated, current, templates, false);
+  return hit;
+}
+
+/** DeepSeek 模式下高敏感场景走本地话术 */
+export async function matchLocalGuard({ accumulated, current, tone, lang, usedKeys, seed }) {
+  await loadScenarios();
+  if (BULLYING_KW.some(k => contains(`${accumulated} ${current}`, k))) {
+    const bullying = matchBullying(accumulated, current);
+    if (bullying) return buildReply(bullying, lang, usedKeys, seed, true);
+  }
+  const hit = await findBestTemplate(accumulated, current, tone);
   if (!hit) return null;
-  return buildReply(hit.template, lang, usedKeys, seed, hit.template.comfortOnly || hit.template.gentleOnly);
+  const t = hit.template;
+  if (t.comfortOnly || t.gentleOnly || t.id.startsWith('bully_') || t.id.includes('domestic') || t.id.includes('violence')) {
+    return buildReply(t, lang, usedKeys, seed, true);
+  }
+  return null;
 }
 
 function buildReply(template, lang, usedKeys, seed, noFollowUp) {
