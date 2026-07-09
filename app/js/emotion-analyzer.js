@@ -11,7 +11,17 @@ export async function loadRules() {
 }
 
 function contains(text, kw) {
-  return text.toLowerCase().includes(kw.toLowerCase());
+  const lowerText = text.toLowerCase();
+  const lowerKw = kw.toLowerCase();
+  let idx = 0;
+  while ((idx = lowerText.indexOf(lowerKw, idx)) >= 0) {
+    if (idx > 0 && '不没别无未'.includes(lowerText[idx - 1])) {
+      idx += lowerKw.length;
+      continue;
+    }
+    return true;
+  }
+  return false;
 }
 
 function detectContexts(text, data) {

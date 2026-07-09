@@ -14,7 +14,18 @@ const BULLYING_KW = [
 ];
 
 function contains(text, kw) {
-  return text.toLowerCase().includes(kw.toLowerCase());
+  const lowerText = text.toLowerCase();
+  const lowerKw = kw.toLowerCase();
+  let idx = 0;
+  while ((idx = lowerText.indexOf(lowerKw, idx)) >= 0) {
+    // 中文否定前缀：被 不/没/别/无/未 修饰时不匹配
+    if (idx > 0 && '不没别无未'.includes(lowerText[idx - 1])) {
+      idx += lowerKw.length;
+      continue;
+    }
+    return true;
+  }
+  return false;
 }
 
 function matchScore(template, text) {
