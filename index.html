@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="情绪岛 — 安静的情绪日记，本地 AI 温柔陪伴，接住你没说出口的话。" />
+  <meta property="og:title" content="情绪岛 · Emotion Island" />
+  <meta property="og:description" content="写下一句此刻的心情。本地运行，温柔陪伴，隐私优先。" />
+  <title>情绪岛 · Emotion Island</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </div>
+        情绪岛
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#origin">缘起</a></li>
+        <li><a href="#features">功能</a></li>
+        <li><a href="#demo">体验</a></li>
+        <li><a href="#scenarios">场景</a></li>
+        <li><a href="#privacy">隐私</a></li>
+      </ul>
+      <div class="nav-right">
+        <span class="nav-badge">iOS App</span>
+        <button class="menu-btn" id="menuBtn" aria-label="菜单">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <header class="hero" id="top">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+
+    <div class="container">
+      <div class="hero-heart">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+      <h1>情绪岛</h1>
+      <p class="hero-sub">写下一句此刻的心情。</p>
+      <p class="hero-desc">如果不知道从何说起，这里有一个安静的小岛，愿意接住你所有没说出口的话。</p>
+
+      <div class="hero-features">
+        <div class="hero-feat"><span class="hero-feat-icon">🍃</span>心形化作叶子</div>
+        <div class="hero-feat"><span class="hero-feat-icon">💬</span>温柔 AI 小助手</div>
+        <div class="hero-feat"><span class="hero-feat-icon">🔒</span>本地运行，不上云</div>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#demo" class="btn-primary">看看怎么陪伴 →</a>
+        <a href="#features" class="btn-ghost">了解功能</a>
+      </div>
+
+      <p class="privacy-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        所有数据仅保存在你的设备上，本地处理，不上传任何内容
+      </p>
+
+      <div class="hero-quick">
+        <a href="#origin" class="quick-card"><div class="qc-icon">🌱</div><div class="qc-label">缘起</div></a>
+        <a href="#features" class="quick-card"><div class="qc-icon">✨</div><div class="qc-label">功能</div></a>
+        <a href="#demo" class="quick-card"><div class="qc-icon">💬</div><div class="qc-label">体验</div></a>
+        <a href="#scenarios" class="quick-card"><div class="qc-icon">🎯</div><div class="qc-label">场景</div></a>
+        <a href="#privacy" class="quick-card"><div class="qc-icon">🛡️</div><div class="qc-label">隐私</div></a>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>向下滚动</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </header>
+
+  <!-- ── 缘起 ── -->
+  <section id="origin" class="alt">
+    <div class="container reveal">
+      <div class="section-header">
+        <span class="section-label">缘起</span>
+        <h2 class="section-title">从一句「今天还好」开始</h2>
+        <p class="section-desc">情绪岛不是要你变得更好，只是愿意接住你此刻最真实的一句话。</p>
+      </div>
+
+      <div class="origin-layout">
+        <div>
+          <div class="origin-quote">
+            「有一次，我特别想表达孤独，但最后只写了『今天还好』——因为不知道从哪说起。」
+          </div>
+          <p class="origin-text">
+            这句话是情绪岛的起点。陪伴不该附带条件——不需要你完成什么，不需要你变得更好，只需要你愿意写下此刻最真实的一句话。
+          </p>
+          <p class="origin-highlight">情绪岛就是为那个「不知道从哪说起」的瞬间而存在的。</p>
+        </div>
+        <div class="origin-visual">
+          <div class="ov-emoji">🌿</div>
+          <p>写下「今天还好」<br>AI 会轻轻问你<br>那些没说出口的部分</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 功能 ── -->
+  <section id="features">
+    <div class="container reveal">
+      <div class="section-header">
+        <span class="section-label">核心功能</span>
+        <h2 class="section-title">安静记录，温柔回应</h2>
+        <p class="section-desc">不是心理咨询，不是人生导师——只是一个愿意倾听、接住你情绪的小岛。</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>情绪日记</h3>
+          <p>写下此刻最真实的一句话。14 天心情贴纸日记，轻轻记录每天的起伏，不打卡、不排名、不社交。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🫂</div>
+          <h3>AI 温柔陪伴</h3>
+          <p>本地 AI 小助手先接住情绪，再轻轻引导。不说教、不瞎编、不突然冒出不合语境的词，像朋友一样倾听。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>场景精准共情</h3>
+          <p>覆盖学业、职场、校园、游戏、生活等数百个场景话术，听懂你的黑话和细枝末节。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>高敏感场景守护</h3>
+          <p>家暴、校园霸凌、自伤等专属话术：零受害者有罪论，纯安抚不追问，尊重你的节奏与安全。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌿</div>
+          <h3>情绪识别</h3>
+          <p>识别「今天还好」背后藏着的孤独，识别「还行」里的平淡与疲惫，轻轻接住那些没说出口的部分。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>完全本地运行</h3>
+          <p>数据永不离开设备。可选 DeepSeek 云端，但危机与高敏感场景始终走本地安全兜底。</p>
+        </div>
+      </div>
+
+      <!-- 心情日记预览 -->
+      <div style="margin-top:64px; text-align:center;">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">14 天心情贴纸 · 每次倾诉贴上一枚心情</p>
+        <div class="diary-preview">
+          <div class="diary-day filled"><span class="dd-emoji">😊</span><span>周一</span></div>
+          <div class="diary-day filled"><span class="dd-emoji">😔</span><span>周二</span></div>
+          <div class="diary-day filled"><span class="dd-emoji">😐</span><span>周三</span></div>
+          <div class="diary-day filled"><span class="dd-emoji">😤</span><span>周四</span></div>
+          <div class="diary-day filled"><span class="dd-emoji">🥰</span><span>周五</span></div>
+          <div class="diary-day filled"><span class="dd-emoji">😴</span><span>周六</span></div>
+          <div class="diary-day empty"><span>—</span><span>今天</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 体验 ── -->
+  <section id="demo" class="cool">
+    <div class="container reveal">
+      <div class="section-header">
+        <span class="section-label">体验预览</span>
+        <h2 class="section-title">像朋友一样聊天</h2>
+        <p class="section-desc">你分享开心，它一起开心；你倾诉委屈，它先接住情绪。</p>
+      </div>
+
+      <div class="demo-wrap">
+        <div>
+          <div class="phone-mock">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-header">
+                <div class="phone-header-dot"></div>
+                <span>情绪岛小助手</span>
+              </div>
+              <div class="chat-area">
+                <div class="bubble bubble-user">今天数学考试考了全班第一！</div>
+                <div class="bubble bubble-ai">
+                  太厉害啦！肯定是你平时偷偷攒了好多努力，一下子就爆发出来了对不对～
+                  <span class="emoji">🎉 ✨ 💪</span>
+                </div>
+                <div class="bubble bubble-user">我打算疯狂打游戏庆祝一下</div>
+                <div class="bubble bubble-ai">
+                  哈哈哈我就知道！这种快乐真的能持续好久，好好放松一下吧～
+                  <span class="emoji">😊 🎮</span>
+                </div>
+                <div class="bubble bubble-user">有时候也会觉得好孤独</div>
+                <div class="bubble bubble-ai">
+                  嗯，愿意说出来就已经很勇敢了。我在这儿，想说什么都可以。
+                  <span class="emoji">🫂 💙</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-info">
+          <h3>听懂你说的话，也听懂你没说的</h3>
+          <p>小助手不会说教，不会道德绑架，不会突然冒出「高光时刻」这种你没提过的词。</p>
+          <ul class="demo-list">
+            <li><span class="dl-check">✓</span>先共情，再轻轻引导——不说「你应该」</li>
+            <li><span class="dl-check">✓</span>懂游戏黑话：非洲之心、连跪、渡劫、出金</li>
+            <li><span class="dl-check">✓</span>霸凌 / 家暴场景：纯安抚，绝不追问二次伤害</li>
+            <li><span class="dl-check">✓</span>多轮对话不重复，中英文双语支持</li>
+            <li><span class="dl-check">✓</span>用户主动问「怎么办」才温和给选项</li>
+          </ul>
+          <div class="demo-tags">
+            <span class="tag">先共情再引导</span>
+            <span class="tag">不说教</span>
+            <span class="tag">懂黑话</span>
+            <span class="tag">本地兜底</span>
+            <span class="tag">双语</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 场景 ── -->
+  <section id="scenarios" class="alt">
+    <div class="container reveal">
+      <div class="section-header">
+        <span class="section-label">场景覆盖</span>
+        <h2 class="section-title">高频情绪，都有专属回应</h2>
+        <p class="section-desc">从考试失利到游戏连跪，从校园霸凌到日常小确幸——本地话术库持续扩充。</p>
+      </div>
+
+      <div class="scenario-grid">
+        <div class="scenario-item"><div class="scenario-emoji">📚</div><h4>学业成长</h4><p>考试、考研、作业压力</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">💼</div><h4>职场日常</h4><p>加班、被批评、职业迷茫</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">🎮</div><h4>游戏情绪</h4><p>连跪、出金、瓦罗兰特</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">🏫</div><h4>校园生活</h4><p>宿舍、体测、班委人际</p></div>
+        <div class="scenario-item highlight"><div class="scenario-emoji">🛡️</div><h4>校园霸凌</h4><p>零有罪论·纯安抚</p></div>
+        <div class="scenario-item highlight"><div class="scenario-emoji">🏠</div><h4>家庭暴力</h4><p>先安全·再共情</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">☕</div><h4>日常小确幸</h4><p>失而复得·通勤顺畅</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">😴</div><h4>身体感官</h4><p>失眠·小病痛·好睡眠</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">🍜</div><h4>饮食味觉</h4><p>家乡味·踩雷·异物</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">🌱</div><h4>习惯管理</h4><p>打卡·破戒·成就感</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">👋</div><h4>陌生人社交</h4><p>善意温暖·边界侵犯</p></div>
+        <div class="scenario-item"><div class="scenario-emoji">📺</div><h4>兴趣期待</h4><p>追更·烂尾·植物开花</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 设计理念 ── -->
+  <section id="philosophy">
+    <div class="container reveal">
+      <div class="section-header">
+        <span class="section-label">设计理念</span>
+        <h2 class="section-title">陪伴，不该附带条件</h2>
+      </div>
+      <div class="philosophy-grid">
+        <div class="philosophy-card">
+          <span class="philosophy-icon">🌙</span>
+          <h3>安静陪伴</h3>
+          <p>没有打卡、没有排行榜、没有社交。你想写的时候才写，不想写也没关系。</p>
+        </div>
+        <div class="philosophy-card">
+          <span class="philosophy-icon">💙</span>
+          <h3>温柔回应</h3>
+          <p>写下「今天还好」，AI 会识别背后可能藏着的孤独，轻轻问你那些没说出口的部分。</p>
+        </div>
+        <div class="philosophy-card">
+          <span class="philosophy-icon">🤝</span>
+          <h3>没有惩罚</h3>
+          <p>不会因为「没坚持」而责备你。只有温暖的托住和正向引导，从不说教。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 隐私 ── -->
+  <section id="privacy" class="cool">
+    <div class="container reveal">
+      <div class="section-header">
+        <span class="section-label">隐私承诺</span>
+        <h2 class="section-title">你的情绪，只属于你</h2>
+      </div>
+
+      <div class="privacy-layout">
+        <div class="privacy-box">
+          <ul class="privacy-list">
+            <li>数据永不离开设备</li>
+            <li>不上传、不分享、不同步</li>
+            <li>Apple Intelligence 本地处理</li>
+            <li>无网络请求、无第三方共享</li>
+            <li>高敏感场景始终本地兜底</li>
+            <li>可选云端 AI，你可随时切换</li>
+          </ul>
+        </div>
+        <div class="privacy-aside">
+          <h3>本地 AI，不是云端窥探</h3>
+          <p>情绪是最私密的数据。情绪岛从设计之初就把「隐私优先」写进了每一行代码——你的日记、你的对话、你的情绪，永远只属于你。</p>
+          <div class="stat-row">
+            <div class="stat-item">
+              <div class="stat-num">0</div>
+              <div class="stat-label">数据上传</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">100%</div>
+              <div class="stat-label">本地处理</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-num">14</div>
+              <div class="stat-label">天心情日记</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="cta">
+    <h2>不知道从哪说起？<br>从这里写第一句就好。</h2>
+    <p>情绪岛 · iOS 本地情绪日记<br>安静陪伴，隐私优先</p>
+    <a href="#top" class="btn-white">回到顶部 ↑</a>
+  </section>
+
+  <footer>
+    <p>情绪岛 Emotion Island · 官方网站</p>
+    <p style="margin-top:6px; opacity:0.55;">© 2026 情绪岛项目 · 所有数据本地存储，隐私优先</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
