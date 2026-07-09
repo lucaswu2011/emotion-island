@@ -1,0 +1,8 @@
+.DS_Store
+.cursor/
+.tools/
+*.xcuserstate
+xcuserdata/
+DerivedData/
+.build/
+.swiftpm/xcode/xcuserdata/
