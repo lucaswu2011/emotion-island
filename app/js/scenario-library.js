@@ -107,7 +107,7 @@ function buildReply(template, lang, usedKeys, seed, noFollowUp) {
   const text = responses[idx % responses.length];
   usedKeys.add(`${keyBase}_${idx}`);
   let full = text;
-  if (!noFollowUp && followUps?.length && Math.random() < 0.35) {
+  if (!noFollowUp && followUps?.length && Math.random() < 0.6) {
     full += ' ' + pickLine(followUps, seed + idx);
   }
   return { text: full, emojis: template.emojis || ['🫂', '🌿'], replyKey: `${keyBase}_${idx}` };
