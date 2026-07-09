@@ -50,6 +50,77 @@ function effectiveKey() {
   return storage.effectiveDeepSeekKey(DEFAULT_API_KEY);
 }
 
+function keyPanelHTML(s) {
+  return `
+    <div class="key-panel">
+      <label>${esc(t(s, 'deepSeekKeyTitle'))}</label>
+      <input id="keyInput" type="password" placeholder="sk-..." value="${esc(state.deepSeekKey)}" />
+      <p class="muted">${esc(t(s, 'deepSeekKeyHint'))}</p>
+      <button class="btn-primary" id="saveKeyBtn">${esc(t(s, 'deepSeekKeySave'))}</button>
+    </div>`;
+}
+
+function providerBarHTML(s) {
+  const usingDeepSeek = state.provider === 'deepseek';
+  return `
+    <div class="provider-bar">
+      <span class="provider-label">${esc(t(s, 'providerLabel'))}</span>
+      <button class="chip ${state.provider === 'local' ? 'active' : ''}" data-provider="local">🌿 ${esc(t(s, 'localAI'))}</button>
+      <button class="chip ${state.provider === 'deepseek' ? 'active' : ''}" data-provider="deepseek">✨ ${esc(t(s, 'deepSeek'))}</button>
+      ${usingDeepSeek ? `<button class="link-btn" id="keyBtn">Key</button>` : ''}
+    </div>
+    ${state.showKeyPanel ? keyPanelHTML(s) : ''}
+    ${state.chatError ? `<div class="error-banner">${esc(state.chatError)}</div>` : ''}
+    <p class="engine-badge">${usingDeepSeek ? `✨ DeepSeek · deepseek-chat · ${esc(t(s, 'deepSeekDesc'))}` : `🌿 ${esc(t(s, 'localAI'))} · ${esc(t(s, 'localAIDesc'))}`}</p>`;
+}
+
+function setProvider(p, s) {
+  if (p === 'deepseek' && !isOnline()) {
+    state.chatError = t(s, 'networkOffline');
+    state.provider = 'local';
+  } else {
+    state.provider = p;
+    state.chatError = null;
+  }
+  storage.saveProvider(state.provider);
+}
+
+async function regenerateOpening() {
+  if (!state.analysis) return;
+  state.isThinking = state.provider === 'deepseek';
+  state.chatError = null;
+  render();
+  try {
+    state.session = await startSession(state.analysis, state.lang, state.provider, effectiveKey());
+    if (state.session.lastError) state.chatError = state.session.lastError;
+  } finally {
+    state.isThinking = false;
+  }
+}
+
+function bindProviderControls(root, s) {
+  root.querySelectorAll('[data-provider]').forEach(btn => {
+    btn.onclick = async () => {
+      const prev = state.provider;
+      setProvider(btn.dataset.provider, s);
+      if (state.screen === 'chat' && prev !== state.provider && state.session?.turnCount === 0) {
+        await regenerateOpening();
+      }
+      render();
+    };
+  });
+  root.querySelector('#keyBtn')?.addEventListener('click', () => {
+    state.showKeyPanel = !state.showKeyPanel;
+    render();
+  });
+  root.querySelector('#saveKeyBtn')?.addEventListener('click', () => {
+    state.deepSeekKey = root.querySelector('#keyInput').value.trim();
+    storage.saveDeepSeekKey(state.deepSeekKey);
+    state.showKeyPanel = false;
+    render();
+  });
+}
+
 async function onStartChat() {
   if (!state.analysis) state.analysis = await analyze(state.diaryText);
   state.isThinking = state.provider === 'deepseek';
@@ -205,6 +276,8 @@ function renderDiary() {
     renderDiary();
   };
   root.querySelector('#diaryContinue').onclick = async () => {
+    state.diaryText = ta.value.trim();
+    if (!state.diaryText) return;
     await onAnalyze();
     nav('mood');
   };
@@ -229,6 +302,7 @@ function renderMood() {
       </div>` : ''}
       <div class="mood-grid">${intents.map(i => `
         <button class="mood-pick" data-intent="${i}">${INTENT_META[i].emoji}<span>${esc(intentLabel(i, s))}</span></button>`).join('')}</div>
+      ${providerBarHTML(s)}
       <button class="btn-primary wide" id="toChat">${esc(t(s, 'moodContinue'))}</button>
     </section>`;
   root.querySelector('#moodInput').oninput = async e => {
@@ -249,6 +323,7 @@ function renderMood() {
     onAnalyze().then(() => renderMood());
   });
   root.querySelector('#toChat').onclick = onStartChat;
+  bindProviderControls(root, s);
   bindNav(root);
 }
 
@@ -265,20 +340,7 @@ function renderChat() {
         <span>${esc(t(s, 'chatTitle'))}</span>
         <button class="link-btn" id="finishBtn">${esc(t(s, 'saveReview'))}</button>
       </header>
-      <div class="provider-bar">
-        <span class="provider-label">${esc(t(s, 'providerLabel'))}</span>
-        <button class="chip ${state.provider === 'local' ? 'active' : ''}" data-provider="local">🌿 ${esc(t(s, 'localAI'))}</button>
-        <button class="chip ${state.provider === 'deepseek' ? 'active' : ''}" data-provider="deepseek">✨ ${esc(t(s, 'deepSeek'))}</button>
-        ${usingDeepSeek ? `<button class="link-btn" id="keyBtn">Key</button>` : ''}
-      </div>
-      ${state.showKeyPanel ? `
-        <div class="key-panel">
-          <label>${esc(t(s, 'deepSeekKeyTitle'))}</label>
-          <input id="keyInput" type="password" placeholder="sk-..." value="${esc(state.deepSeekKey)}" />
-          <p class="muted">${esc(t(s, 'deepSeekKeyHint'))}</p>
-          <button class="btn-primary" id="saveKeyBtn">${esc(t(s, 'deepSeekKeySave'))}</button>
-        </div>` : ''}
-      ${state.chatError ? `<div class="error-banner">${esc(state.chatError)}</div>` : ''}
+      ${providerBarHTML(s)}
       ${pillHTML(island, sess.dominantIntent)}
       <p class="turn-label">${esc(t(s, 'turn', sess.turnCount))}</p>
       <div class="chat-area" id="chatArea">${sess.messages.map(m => `
@@ -289,7 +351,6 @@ function renderChat() {
         <button class="btn-primary" id="sendBtn" ${state.isThinking ? 'disabled' : ''}>${esc(t(s, 'send'))}</button>
       </div>
       <p class="privacy-foot">${esc(privacy)}</p>
-      <p class="engine-badge">${usingDeepSeek ? '✨ DeepSeek · deepseek-chat' : `🌿 ${esc(t(s, 'localAI'))} · ${esc(t(s, 'localAIDesc'))}`}</p>
     </section>`;
   const area = root.querySelector('#chatArea');
   area.scrollTop = area.scrollHeight;
@@ -303,30 +364,7 @@ function renderChat() {
   root.querySelector('#sendBtn')?.addEventListener('click', send);
   input?.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
   root.querySelector('#finishBtn')?.addEventListener('click', () => nav('summary'));
-  root.querySelectorAll('[data-provider]').forEach(btn => {
-    btn.onclick = () => {
-      const p = btn.dataset.provider;
-      if (p === 'deepseek' && !isOnline()) {
-        state.chatError = t(s, 'networkOffline');
-        state.provider = 'local';
-      } else {
-        state.provider = p;
-        state.chatError = null;
-      }
-      storage.saveProvider(state.provider);
-      renderChat();
-    };
-  });
-  root.querySelector('#keyBtn')?.addEventListener('click', () => {
-    state.showKeyPanel = !state.showKeyPanel;
-    renderChat();
-  });
-  root.querySelector('#saveKeyBtn')?.addEventListener('click', () => {
-    state.deepSeekKey = root.querySelector('#keyInput').value.trim();
-    storage.saveDeepSeekKey(state.deepSeekKey);
-    state.showKeyPanel = false;
-    renderChat();
-  });
+  bindProviderControls(root, s);
   bindNav(root);
 }
 
