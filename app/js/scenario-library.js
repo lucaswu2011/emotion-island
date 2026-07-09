@@ -99,7 +99,3 @@ export function detectTone(text) {
   if (pos.some(k => contains(text, k))) return 'positive';
   return 'neutral';
 }
-
-function contains(text, kw) {
-  return text.toLowerCase().includes(kw.toLowerCase());
-}
