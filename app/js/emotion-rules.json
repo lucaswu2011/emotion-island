@@ -1,0 +1,587 @@
+{
+  "rules": [
+    {
+      "keywords": [
+        "有点生气",
+        "很生气",
+        "太生气了",
+        "气死了",
+        "气疯了"
+      ],
+      "intent": "anger",
+      "confidence": 0.95,
+      "priority": 10
+    },
+    {
+      "keywords": [
+        "生气",
+        "愤怒",
+        "恼火",
+        "气愤",
+        "火大",
+        "恼怒"
+      ],
+      "intent": "anger",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "被偷",
+        "偷拿",
+        "偷了",
+        "拿走我的",
+        "动了我的",
+        "未经允许",
+        "没经过同意"
+      ],
+      "intent": "anger",
+      "confidence": 0.9,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "被诬陷",
+        "诬陷我",
+        "冤枉我",
+        "错怪",
+        "栽赃",
+        "泼脏水",
+        "打小报告",
+        "搜包",
+        "不是我拿的",
+        "不是我的锅"
+      ],
+      "intent": "frustration",
+      "confidence": 0.96,
+      "priority": 11
+    },
+    {
+      "keywords": [
+        "背锅",
+        "甩锅",
+        "被怀疑",
+        "怀疑我偷"
+      ],
+      "intent": "frustration",
+      "confidence": 0.94,
+      "priority": 10
+    },
+    {
+      "keywords": [
+        "好委屈",
+        "太委屈",
+        "很委屈",
+        "委屈死了"
+      ],
+      "intent": "frustration",
+      "confidence": 0.94,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "委屈",
+        "憋屈",
+        "烦躁",
+        "不爽",
+        "郁闷",
+        "心烦"
+      ],
+      "intent": "frustration",
+      "confidence": 0.9,
+      "priority": 7
+    },
+    {
+      "keywords": [
+        "好失望",
+        "太失望",
+        "失望了"
+      ],
+      "intent": "disappointment",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "失望",
+        "失落",
+        "落空",
+        "白期待了",
+        "没想到会"
+      ],
+      "intent": "disappointment",
+      "confidence": 0.89,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "好害怕",
+        "太害怕",
+        "吓坏了"
+      ],
+      "intent": "fear",
+      "confidence": 0.94,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "害怕",
+        "恐惧",
+        "担心",
+        "担忧",
+        "心慌",
+        "不安"
+      ],
+      "intent": "fear",
+      "confidence": 0.88,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "好累",
+        "太累了",
+        "累死了",
+        "精疲力竭",
+        "筋疲力尽"
+      ],
+      "intent": "exhaustion",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "疲惫",
+        "很累",
+        "累坏了",
+        "撑不住",
+        "透支"
+      ],
+      "intent": "exhaustion",
+      "confidence": 0.9,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "好迷茫",
+        "不知道怎么办",
+        "不知所措",
+        "无所适从"
+      ],
+      "intent": "confusion",
+      "confidence": 0.91,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "迷茫",
+        "困惑",
+        "混乱",
+        "没方向"
+      ],
+      "intent": "confusion",
+      "confidence": 0.86,
+      "priority": 5
+    },
+    {
+      "keywords": [
+        "有点难过",
+        "我有点难过",
+        "好难过",
+        "很难过"
+      ],
+      "intent": "sadness",
+      "confidence": 0.94,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "难过",
+        "不开心",
+        "心里压着",
+        "想哭",
+        "伤心",
+        "心碎"
+      ],
+      "intent": "sadness",
+      "confidence": 0.9,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "不知道从哪儿说起",
+        "不知道从何说起",
+        "不知道怎么说"
+      ],
+      "intent": "sadness",
+      "confidence": 0.88,
+      "priority": 7
+    },
+    {
+      "keywords": [
+        "孤独",
+        "寂寞",
+        "孤单"
+      ],
+      "intent": "sadness",
+      "confidence": 0.87,
+      "priority": 5
+    },
+    {
+      "keywords": [
+        "今天很开心",
+        "今天开心",
+        "好开心",
+        "很开心"
+      ],
+      "intent": "joy",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "开心",
+        "高兴",
+        "快乐",
+        "幸福",
+        "满足",
+        "感恩"
+      ],
+      "intent": "joy",
+      "confidence": 0.88,
+      "priority": 5
+    },
+    {
+      "keywords": [
+        "有点焦虑",
+        "好焦虑",
+        "太焦虑"
+      ],
+      "intent": "anxiety",
+      "confidence": 0.92,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "焦虑",
+        "紧张",
+        "压力大",
+        "喘不过气"
+      ],
+      "intent": "anxiety",
+      "confidence": 0.88,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "冷暴力",
+        "不回消息",
+        "躲着不说"
+      ],
+      "intent": "frustration",
+      "confidence": 0.94,
+      "priority": 10
+    },
+    {
+      "keywords": [
+        "动手打",
+        "打我",
+        "一巴掌",
+        "家暴",
+        "不是第一次了",
+        "PUA",
+        "经济控制"
+      ],
+      "intent": "fear",
+      "confidence": 0.96,
+      "priority": 12
+    },
+    {
+      "keywords": [
+        "催婚",
+        "催生",
+        "别人家孩子"
+      ],
+      "intent": "frustration",
+      "confidence": 0.93,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "提不起兴趣",
+        "什么都没意思",
+        "浑浑噩噩",
+        "麻木",
+        "空洞"
+      ],
+      "intent": "sadness",
+      "confidence": 0.92,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "猫生病",
+        "狗生病",
+        "毛孩子生病",
+        "跑丢了",
+        "拆家"
+      ],
+      "intent": "fear",
+      "confidence": 0.9,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "今天还好",
+        "还好今天"
+      ],
+      "intent": "maskedLoneliness",
+      "confidence": 0.92,
+      "priority": 7
+    },
+    {
+      "keywords": [
+        "今天还行"
+      ],
+      "intent": "neutralMasking",
+      "confidence": 0.92,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "还好吧",
+        "还行吧",
+        "一般般",
+        "凑合"
+      ],
+      "intent": "neutralMasking",
+      "confidence": 0.87,
+      "priority": 5
+    },
+    {
+      "keywords": [
+        "so angry",
+        "very angry",
+        "furious",
+        "pissed",
+        "mad at"
+      ],
+      "intent": "anger",
+      "confidence": 0.94,
+      "priority": 10
+    },
+    {
+      "keywords": [
+        "angry",
+        "mad",
+        "annoyed",
+        "irritated"
+      ],
+      "intent": "anger",
+      "confidence": 0.9,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "stolen",
+        "took my",
+        "without asking"
+      ],
+      "intent": "anger",
+      "confidence": 0.9,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "framed",
+        "falsely accused",
+        "blamed for",
+        "not my fault",
+        "set up"
+      ],
+      "intent": "frustration",
+      "confidence": 0.94,
+      "priority": 11
+    },
+    {
+      "keywords": [
+        "so wronged",
+        "unfair",
+        "wronged"
+      ],
+      "intent": "frustration",
+      "confidence": 0.92,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "frustrated",
+        "upset",
+        "fed up"
+      ],
+      "intent": "frustration",
+      "confidence": 0.88,
+      "priority": 7
+    },
+    {
+      "keywords": [
+        "disappointed",
+        "let down",
+        "disappointment"
+      ],
+      "intent": "disappointment",
+      "confidence": 0.91,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "so scared",
+        "terrified",
+        "frightened"
+      ],
+      "intent": "fear",
+      "confidence": 0.93,
+      "priority": 9
+    },
+    {
+      "keywords": [
+        "scared",
+        "afraid",
+        "worried",
+        "anxious about"
+      ],
+      "intent": "fear",
+      "confidence": 0.87,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "so tired",
+        "very tired",
+        "exhausted",
+        "worn out",
+        "burned out",
+        "dead tired"
+      ],
+      "intent": "exhaustion",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "tired",
+        "drained",
+        "fatigued"
+      ],
+      "intent": "exhaustion",
+      "confidence": 0.88,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "so confused",
+        "don't know what to do",
+        "lost"
+      ],
+      "intent": "confusion",
+      "confidence": 0.9,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "confused",
+        "uncertain"
+      ],
+      "intent": "confusion",
+      "confidence": 0.85,
+      "priority": 5
+    },
+    {
+      "keywords": [
+        "so sad",
+        "very sad",
+        "heartbroken"
+      ],
+      "intent": "sadness",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "sad",
+        "unhappy",
+        "lonely",
+        "crying",
+        "hurt"
+      ],
+      "intent": "sadness",
+      "confidence": 0.88,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "so happy",
+        "very happy",
+        "thrilled",
+        "excited"
+      ],
+      "intent": "joy",
+      "confidence": 0.93,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "happy",
+        "glad",
+        "joyful"
+      ],
+      "intent": "joy",
+      "confidence": 0.87,
+      "priority": 5
+    },
+    {
+      "keywords": [
+        "so anxious",
+        "very anxious",
+        "stressed out"
+      ],
+      "intent": "anxiety",
+      "confidence": 0.92,
+      "priority": 8
+    },
+    {
+      "keywords": [
+        "anxious",
+        "nervous",
+        "stressed"
+      ],
+      "intent": "anxiety",
+      "confidence": 0.87,
+      "priority": 6
+    },
+    {
+      "keywords": [
+        "i'm fine",
+        "im fine",
+        "doing okay",
+        "not bad"
+      ],
+      "intent": "maskedLoneliness",
+      "confidence": 0.88,
+      "priority": 7
+    }
+  ],
+  "boundaryKeywords": [
+    "偷",
+    "偷拿",
+    "偷了",
+    "stolen",
+    "took my",
+    "without asking"
+  ],
+  "conflictKeywords": [
+    "吵架",
+    "欺负",
+    "bullied",
+    "fight"
+  ]
+}
