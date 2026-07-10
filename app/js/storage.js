@@ -5,6 +5,7 @@ const KEYS = {
   langGate: 'ei_lang_gate',
   provider: 'companionAIProvider',
   deepSeekKey: 'deepSeekAPIKey',
+  chatSession: 'ei_chat_session',
 };
 
 export function loadLang() {
@@ -87,4 +88,41 @@ export function tagStyleFor(index, hour = new Date().getHours()) {
   const time = hour < 12 ? 'dawn' : hour < 17 ? 'noon' : hour < 21 ? 'dusk' : 'night';
   const palette = [time, 'mint', 'blush', 'sky', 'noon', 'dusk'];
   return palette[index % palette.length];
+}
+
+/* ── Chat session persistence (DeepSeek memory across refresh) ── */
+
+export function saveChatSession(session) {
+  if (!session?.messages?.length) return;
+  const data = {
+    messages: session.messages,
+    turnCount: session.turnCount,
+    usedReplyKeys: [...(session.usedReplyKeys || [])],
+    dominantIntent: session.dominantIntent,
+    userLanguage: session.userLanguage,
+    accumulated: session.accumulated,
+    providerUsed: session.providerUsed,
+    lastError: session.lastError,
+    analysisUserText: session.analysisUserText || null,
+    savedAt: Date.now(),
+  };
+  try {
+    localStorage.setItem(KEYS.chatSession, JSON.stringify(data));
+  } catch { /* quota exceeded — ignore */ }
+}
+
+export function loadChatSession() {
+  try {
+    const raw = localStorage.getItem(KEYS.chatSession);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    data.usedReplyKeys = new Set(data.usedReplyKeys || []);
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export function clearChatSession() {
+  localStorage.removeItem(KEYS.chatSession);
 }

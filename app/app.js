@@ -127,7 +127,14 @@ async function onStartChat() {
   state.chatError = null;
   render();
   try {
-    state.session = await startSession(state.analysis, state.lang, state.provider, effectiveKey());
+    // 恢复已保存的会话（仅当日记文本匹配时）
+    const saved = storage.loadChatSession();
+    if (saved && saved.analysisUserText === state.analysis.userText && saved.messages?.length) {
+      state.session = saved;
+    } else {
+      state.session = await startSession(state.analysis, state.lang, state.provider, effectiveKey());
+      state.session.analysisUserText = state.analysis.userText;
+    }
     if (state.session.lastError) state.chatError = state.session.lastError;
     if (state.provider === 'deepseek' && !isOnline()) {
       state.chatError = t(state.lang, 'networkOffline');
@@ -148,6 +155,7 @@ async function onSendChat(text) {
     state.session = await continueSession(state.session, text, state.lang, state.provider, effectiveKey());
     if (state.session.lastError) state.chatError = t(state.lang, 'deepSeekError') + ': ' + state.session.lastError;
   } finally {
+    storage.saveChatSession(state.session);
     state.isThinking = false;
     render();
   }
@@ -202,6 +210,7 @@ function resetFlow() {
   state.diaryText = '';
   state.analysis = null;
   state.session = null;
+  storage.clearChatSession();
   nav('welcome');
 }
 
