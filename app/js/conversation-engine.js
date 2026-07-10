@@ -94,6 +94,11 @@ const FALLBACK = {
       '真正的陪伴不一定要有话题，安静也是一种连接。',
       '思绪飘到哪就说到哪，这里没有规则。',
       '在岛上不用客气，安静或说话，随你心意就好。',
+      '我可能不总能完全理解你的意思，但我很想听你说下去。',
+      '你是在问我什么吗？我不太擅长回答问题，但很愿意倾听你现在的心情。',
+      '有些话我可能没太懂，你可以再说说看～我在这儿呢。',
+      '不管你想聊什么——心情也好日常也好——我都在听。',
+      '我不一定都能答对，但你可以跟我说说你的感受，那是我最想接住的。',
     ],
   },
   en: {
@@ -162,6 +167,11 @@ const FALLBACK = {
       "Real company doesn't need constant conversation.",
       "Let your mind go wherever it wants. No rules here.",
       "Rest or talk — either way, you're welcome on this island.",
+      "I might not always fully understand, but I care about what you have to say.",
+      "If you're asking something — I'm not great at answers, but I'm really good at listening.",
+      "I may not get it right every time. Feel free to tell me more — I'm here.",
+      "Whatever you want to share — feelings, thoughts, your day — I'm listening.",
+      "I won't always have the perfect reply, but I'll always be here for you.",
     ],
   },
 };

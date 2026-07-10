@@ -89,7 +89,12 @@ async function findBestTemplate(accumulated, current, tone) {
     hit = bestMatch(accumulated, current, templates.filter(t => t.tone === 'negative'), false)
       || bestMatch(accumulated, current, templates.filter(t => t.tone === 'positive'), false);
   }
-  if (!hit) hit = bestMatch(accumulated, current, templates, false);
+  // 相同语气的模板搜索 & 中性→负/正向搜索：接受任何有匹配的结果
+  // 跨语气的全库兜底搜索：必须 ≥ 2 个关键词命中（score ≥ 25），单关键词弱匹配跳过
+  if (!hit) {
+    hit = bestMatch(accumulated, current, templates, false);
+    if (hit && hit.score < 25) hit = null;
+  }
   return hit;
 }
 
